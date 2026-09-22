@@ -1,0 +1,333 @@
+/* =========================================================
+   KS-CHAT — KEOPS Studios
+   Charte réelle du site keops-studios.com : couleurs, polices
+   (Boldonse / Oswald / Inter) et traitement "badge" repris tels quels.
+   ========================================================= */
+
+@font-face {
+    font-family: 'KS Display';
+    src: url('fonts/boldonse-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'KS Oswald';
+    src: url('fonts/oswald-500.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'KS Oswald';
+    src: url('fonts/oswald-600.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'KS Oswald';
+    src: url('fonts/oswald-700.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'KS Inter';
+    src: url('fonts/inter-400.woff2') format('woff2');
+    font-weight: 400;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'KS Inter';
+    src: url('fonts/inter-500.woff2') format('woff2');
+    font-weight: 500;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'KS Inter';
+    src: url('fonts/inter-600.woff2') format('woff2');
+    font-weight: 600;
+    font-display: swap;
+}
+@font-face {
+    font-family: 'KS Inter';
+    src: url('fonts/inter-700.woff2') format('woff2');
+    font-weight: 700;
+    font-display: swap;
+}
+
+:root {
+    /* Palette exacte de keops-studios.com (thème sombre) */
+    --color-ink: #0b0b0b;
+    --color-surface: #131313;
+    --color-surface-2: #191919;
+    --color-surface-3: #212121;
+    --color-border: #2a2a2a;
+    --color-muted: #9a9a9a;
+
+    --color-lime: #d0ff00;
+    --color-lime-soft: #e6ff80;
+    --color-lime-dim: #a8cc00;
+    --color-on-lime: #0b0b0b;
+
+    --color-white: #ffffff;
+    --color-body-text: #f2f2f2;
+    --color-prose: #dcdcdc;
+
+    --color-red: #ff5c5c;
+    --color-blue: #7ec8ff;
+    --color-purple: #c98cff;
+    --color-amber: #ffb400;
+
+    --panel: rgba(11, 11, 11, 0.74);
+    --panel-strong: rgba(8, 8, 8, 0.94);
+
+    --font-display: 'KS Display', 'KS Oswald', 'KS Inter', sans-serif;
+    --font-cta: 'KS Oswald', 'KS Inter', sans-serif;
+    --font-sans: 'KS Inter', -apple-system, sans-serif;
+    --radius: 10px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: var(--font-sans);
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+#ks-chat {
+    position: absolute;
+    left: 24px;
+    top: 24px;
+    width: 460px;
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+/* ---------------------------------------------------------
+   Fil de messages
+   --------------------------------------------------------- */
+
+/* Conteneur externe : c'est LUI qui porte le fond, la bordure et les
+   coins arrondis, avec overflow:hidden pour clipper le contenu.
+   PAS de backdrop-filter ici : le CEF embarqué dans RDR ignore le
+   border-radius du parent en présence d'un backdrop-filter, même avec
+   overflow:hidden (constaté : #ks-chat-input-wrapper, qui n'a jamais
+   utilisé backdrop-filter, a toujours eu des coins parfaitement ronds).
+   On compense l'absence de flou par un fond plus opaque (--panel-strong,
+   déjà utilisé par #ks-chat-input-wrapper) plutôt que le fond semi-
+   transparent --panel. */
+#ks-chat-messages-frame {
+    border-radius: var(--radius);
+    background: var(--panel-strong);
+    border: 1px solid var(--color-border);
+    box-shadow: inset 2px 0 0 0 var(--color-lime);
+    overflow: hidden;
+    transition: opacity .35s ease;
+}
+
+/* Conteneur interne : gère uniquement le défilement, sans radius/fond
+   propres (déjà portés par le cadre externe). */
+#ks-chat-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 12px 14px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-lime-dim) transparent;
+}
+
+#ks-chat-messages::-webkit-scrollbar { width: 5px; }
+#ks-chat-messages::-webkit-scrollbar-thumb { background: var(--color-lime-dim); border-radius: 3px; }
+#ks-chat-messages::-webkit-scrollbar-thumb:hover { background: var(--color-lime); }
+#ks-chat-messages::-webkit-scrollbar-track { background: transparent; }
+
+#ks-chat.hidden #ks-chat-messages-frame { opacity: 0; }
+#ks-chat.focused #ks-chat-messages-frame { opacity: 1 !important; }
+
+.ks-msg {
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--color-body-text);
+    word-wrap: break-word;
+    text-shadow: 0 1px 2px rgba(0,0,0,.9);
+    animation: ks-fade-in .18s ease-out;
+}
+
+@keyframes ks-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.ks-name {
+    color: var(--color-white);
+    font-weight: 600;
+    margin-right: 6px;
+}
+.ks-name::after { content: ':'; margin-right: 4px; color: var(--color-muted); }
+
+/* Étiquettes ([HRP], [STAFF], [PUB]...) : même traitement que les badges
+   du site (Oswald, majuscules, tracking large, pastille arrondie). */
+.ks-tag {
+    display: inline-flex;
+    align-items: center;
+    font-family: var(--font-cta);
+    font-weight: 600;
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 1px 7px;
+    border-radius: 999px;
+    border: 1px solid var(--color-border);
+    background: var(--color-surface-2);
+    color: var(--color-muted);
+    margin-right: 6px;
+    vertical-align: 1px;
+}
+
+.ks-msg--say .ks-text { color: var(--color-body-text); }
+
+.ks-msg--me {
+    color: var(--color-lime-soft);
+    font-style: italic;
+}
+
+.ks-msg--do {
+    color: var(--color-blue);
+    font-style: italic;
+}
+.ks-do-author { color: var(--color-muted); font-style: normal; font-size: 12px; }
+
+.ks-msg--ooc .ks-tag { color: var(--color-muted); }
+.ks-msg--ooc .ks-text { color: var(--color-prose); }
+
+.ks-msg--looc .ks-tag { color: var(--color-blue); border-color: rgba(126,200,255,0.3); }
+
+.ks-msg--ad {
+    background: rgba(208, 255, 0, 0.06);
+    border-radius: 6px;
+    padding: 3px 6px;
+}
+.ks-msg--ad .ks-tag { color: var(--color-on-lime); background: var(--color-lime); border-color: var(--color-lime); }
+
+.ks-msg--pm { color: var(--color-purple); }
+.ks-msg--pm .ks-tag { color: var(--color-purple); border-color: rgba(201,140,255,0.35); }
+
+.ks-msg--admin { color: #ffb3b3; }
+.ks-msg--admin .ks-tag { color: var(--color-red); border-color: rgba(255,92,92,0.35); }
+
+.ks-msg--report { color: #ffd27a; }
+.ks-msg--report .ks-tag { color: var(--color-amber); border-color: rgba(255,180,0,0.35); }
+
+.ks-msg--system {
+    color: var(--color-muted);
+    font-size: 12.5px;
+    font-style: italic;
+}
+.ks-reason { opacity: .7; }
+
+.ks-msg--error { color: var(--color-red); font-weight: 600; }
+.ks-msg--success { color: var(--color-lime); font-weight: 600; }
+
+/* ---------------------------------------------------------
+   Suggestions
+   --------------------------------------------------------- */
+
+#ks-chat-suggestions {
+    display: none;
+    flex-direction: column;
+    background: var(--panel-strong);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    max-height: 220px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-lime-dim) transparent;
+}
+
+#ks-chat-suggestions.visible { display: flex; }
+
+#ks-chat-suggestions::-webkit-scrollbar { width: 5px; }
+#ks-chat-suggestions::-webkit-scrollbar-thumb { background: var(--color-lime-dim); border-radius: 3px; }
+#ks-chat-suggestions::-webkit-scrollbar-thumb:hover { background: var(--color-lime); }
+#ks-chat-suggestions::-webkit-scrollbar-track { background: transparent; }
+
+.ks-suggestion {
+    padding: 7px 10px;
+    font-size: 12.5px;
+    color: var(--color-muted);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+}
+.ks-suggestion:last-child { border-bottom: none; }
+.ks-suggestion.active { background: rgba(208,255,0,0.07); }
+
+.ks-suggestion .ks-suggestion-cmd {
+    font-family: var(--font-cta);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: var(--color-lime);
+    white-space: nowrap;
+}
+.ks-suggestion .ks-suggestion-params {
+    font-family: var(--font-sans);
+    color: var(--color-white);
+    opacity: .65;
+    white-space: nowrap;
+}
+.ks-suggestion .ks-suggestion-help {
+    font-family: var(--font-sans);
+    color: var(--color-muted);
+    font-size: 11.5px;
+}
+
+/* ---------------------------------------------------------
+   Zone de saisie
+   --------------------------------------------------------- */
+
+#ks-chat-input-wrapper {
+    display: none;
+    align-items: center;
+    gap: 9px;
+    background: var(--panel-strong);
+    border: 1px solid var(--color-lime);
+    border-radius: var(--radius);
+    padding: 10px 13px;
+    box-shadow: 0 0 0 1px rgba(208,255,0,0.15), 0 8px 30px -8px rgba(208,255,0,0.25);
+    pointer-events: auto;
+}
+
+#ks-chat.focused #ks-chat-input-wrapper { display: flex; }
+
+#ks-chat-caret {
+    display: flex;
+    align-items: center;
+    color: var(--color-lime);
+    flex-shrink: 0;
+}
+#ks-chat-caret svg { width: 14px; height: 14px; }
+
+#ks-chat-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--color-body-text);
+    font-family: var(--font-sans);
+    font-size: 14px;
+}
+
+#ks-chat-input::placeholder { color: var(--color-muted); }
